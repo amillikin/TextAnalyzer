@@ -29,7 +29,7 @@ void analyzeOctets() {
 }
 
 void analyzeTrigrams() {
-	int trigrams[16777216];
+	long int* trigrams = new long int[16777216];
 	unsigned int trigramTotal = 0;
 	char byteToCheck;
 
@@ -37,7 +37,7 @@ void analyzeTrigrams() {
 		trigramTotal <<= 8;
 		trigramTotal &= 0xffff00;
 		trigramTotal |= byteToCheck;
-		trigrams[trigramTotal] = 1;
+		trigrams[trigramTotal] += 1;
 	}
 
 	//Write results to outfile.
