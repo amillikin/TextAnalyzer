@@ -22,39 +22,72 @@ int byteOnes(int byte) {
 }
 
 void analyzeOctets() {
-	int octets[640000];
+	int octets[640000] = { 0 };
+	int bitVals[640000] = { 0 };
 
 
 }
 
 void analyzeTrigrams() {
-	int trigrams[16777216];
-
-}
-
-void analyzeDigrams() {
-	int digrams[65536];
-
-}
-
-void analyzeSingleBytes() {
-	int bytes[255];
-	int tempCount = 0, byteTotal = 0;
+	int* trigrams = new int[16777216];
+	int tempCount = 0, digramTotal = 0;
 	char byteToCheck;
 
 	while (inFile.get(byteToCheck)) {
-		byteTotal += byteToCheck;
+		digramTotal += byteToCheck;
 		tempCount++;
-		if (tempCount == 8) {
-			bytes[byteTotal] += 1;
-			byteTotal = 0;
+		if (tempCount == 3) {
+			trigrams[digramTotal] += 1;
+			digramTotal = 0;
 			tempCount = 0;
 		}
 	}
 
 	//Write results to outfile.
+	for (int i = 0; i < 16777216; i++) {
+		if (trigrams[i] > 0) {
+			outFile << i << "," << trigrams[i] << "," << endl;
+		}
+	}
+	delete[] trigrams;
+}
+
+void analyzeDigrams() {
+	int digrams[65536] = { 0 };
+	int tempCount = 0, digramTotal = 0;
+	char byteToCheck;
+
+	while (inFile.get(byteToCheck)) {
+		digramTotal += byteToCheck;
+		tempCount++;
+		if (tempCount == 2) {
+			digrams[digramTotal] += 1;
+			digramTotal = 0;
+			tempCount = 0;
+		}
+	}
+
+	//Write results to outfile.
+	for (int i = 0; i < 65536; i++) {
+		if (digrams[i] > 0) {
+			outFile << i << "," << digrams[i] << "," << endl;
+		}
+	}
+}
+
+void analyzeSingleBytes() {
+	int bytes[255] = { 0 };
+	char byteToCheck;
+
+	while (inFile.get(byteToCheck)) {
+		bytes[byteToCheck] += 1;
+	}
+
+	//Write results to outfile.
 	for (int i = 0; i < 255; i++) {
-		outFile << bytes[i] << "," << endl;
+		if (bytes[i] > 0) {
+			outFile << i << "," << bytes[i] << "," << endl;
+		}
 	}
 }
 
@@ -87,7 +120,9 @@ void analyzeSingleBits() {
 	//Write results to outfile.
 	outFile << totalOnes << "," << totalZed << "," << endl;
 	for (int i = 0; i < 64; i++) {
-		outFile << blockCounts[i] << "," << endl;
+				if (blockCounts[i] > 0) {
+			outFile << i << "," << blockCounts[i] << "," << endl;
+		}
 	}	
 
 }
