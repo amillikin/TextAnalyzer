@@ -29,18 +29,15 @@ void analyzeOctets() {
 }
 
 void analyzeTrigrams() {
-	int* trigrams = new int[16777216];
-	int tempCount = 0, digramTotal = 0;
+	int trigrams[16777216];
+	unsigned int trigramTotal = 0;
 	char byteToCheck;
 
 	while (inFile.get(byteToCheck)) {
-		digramTotal += byteToCheck;
-		tempCount++;
-		if (tempCount == 3) {
-			trigrams[digramTotal] += 1;
-			digramTotal = 0;
-			tempCount = 0;
-		}
+		trigramTotal <<= 8;
+		trigramTotal &= 0xffff00;
+		trigramTotal |= byteToCheck;
+		trigrams[trigramTotal] = 1;
 	}
 
 	//Write results to outfile.
@@ -54,17 +51,14 @@ void analyzeTrigrams() {
 
 void analyzeDigrams() {
 	int digrams[65536] = { 0 };
-	int tempCount = 0, digramTotal = 0;
+	unsigned int digramTotal = 0;
 	char byteToCheck;
 
 	while (inFile.get(byteToCheck)) {
-		digramTotal += byteToCheck;
-		tempCount++;
-		if (tempCount == 2) {
-			digrams[digramTotal] += 1;
-			digramTotal = 0;
-			tempCount = 0;
-		}
+		digramTotal <<= 8;
+		digramTotal &= 0xff00;
+		digramTotal |= byteToCheck;
+		digrams[digramTotal] += 1;
 	}
 
 	//Write results to outfile.
@@ -118,6 +112,7 @@ void analyzeSingleBits() {
 
 	totalZed = size - numOfOnes;
 	//Write results to outfile.
+	outFile << "totalOnes" << "," << "totalZed" << "," << endl;
 	outFile << totalOnes << "," << totalZed << "," << endl;
 	for (int i = 0; i < 64; i++) {
 				if (blockCounts[i] > 0) {
